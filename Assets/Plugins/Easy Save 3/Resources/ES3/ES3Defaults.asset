@@ -33,6 +33,7 @@ MonoBehaviour:
     - Assembly-CSharp
     - Sirenix.OdinInspector.CompatibilityLayer
     - Sirenix.OdinInspector.CompatibilityLayer.Editor
+    - PPv2URPConverters
     showAdvancedSettings: 0
   addMgrToSceneAutomatically: 0
   autoUpdateReferences: 1

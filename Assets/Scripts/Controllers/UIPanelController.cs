@@ -1,21 +1,19 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Linq;
+using Signals;
 using Sirenix.OdinInspector;
+using UnityEngine;
 
 public class UIPanelController : MonoBehaviour
 {
-
     #region Self Variables
 
     #region Serialized Variables
 
     [SerializeField] private List<Transform> layers = new List<Transform>();
-
+    
     #endregion
-
-
+    
     #endregion
 
     private void OnEnable()
@@ -25,51 +23,42 @@ public class UIPanelController : MonoBehaviour
 
     private void SubscribeEvents()
     {
-        
-
-
+        CoreUISignals.Instance.onOpenPanel += OnOpenPanel;
+        CoreUISignals.Instance.onClosePanel += OnClosePanel;
+        CoreUISignals.Instance.onCloseAllPanels += OnCloseAllPanels;
     }
 
     private void UnSubscribeEvents()
     {
-
-
-
+        CoreUISignals.Instance.onOpenPanel -= OnOpenPanel;
+        CoreUISignals.Instance.onClosePanel -= OnClosePanel;
+        CoreUISignals.Instance.onCloseAllPanels -= OnCloseAllPanels;
     }
 
     private void OnDisable()
     {
         UnSubscribeEvents();
     }
-
-    [Button("OpenPanel")]
-    private void OnOpenPanel(UIPanelTypes type, int layerPos)
+    [Button("OnOpenPanel")]
+    private void OnOpenPanel(UIPanelTypes type, int layerValue)
     {
-
-        Instantiate(Resources.Load<GameObject>($"Screens/{type}Panel"), layers[layerPos]);
-
+        OnClosePanel(layerValue);
+        Instantiate(Resources.Load<GameObject>($"Screens/{type}Panel"), layers[layerValue]);
     }
-
-    [Button("ClosePanel")]
-    private void OnClosePanel(int layerPos)
+    [Button("OnClosePanel")]
+    private void OnClosePanel(int layerValue)
     {
-
-        if (layers[layerPos].transform.childCount > 0)
-        { Destroy(layers[layerPos].GetChild(0).gameObject); }
-
+        if (layers[layerValue].childCount > 0)
+        {
+            Destroy(layers[layerValue].GetChild(0).gameObject);
+        }
     }
-
+    [Button("OnCloseAllPanel")]
     private void OnCloseAllPanels()
     {
-
-        for(int i = 0; i<layers.Count; i++)
+        foreach (var t in layers.Where(t => t.childCount > 0))
         {
-
-            if (layers[i].transform.childCount > 0)
-            { Destroy(layers[i].GetChild(0).gameObject); }
-
+            Destroy(t.GetChild(0).gameObject);
         }
-
     }
-
 }
